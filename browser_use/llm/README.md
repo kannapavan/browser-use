@@ -11,9 +11,12 @@ We officially support the following LLMs:
 
 - Mistral
 
-## Mistral specifics
-
-Use `ChatMistral` with `MISTRAL_API_KEY` (and optional `MISTRAL_BASE_URL`). Structured outputs automatically strip unsupported JSON schema keywords (`minLength`, `maxLength`, `pattern`, `format`), and generation uses `max_tokens` plus the optional `safe_prompt` flag.
+- LiteLLM (local + cloud models via [litellm](https://github.com/BerriAI/litellm))
+  - Local models (no API key needed): `ChatLiteLLM(model='ollama/llama3.2')`
+  - Cloud models: `ChatLiteLLM(model='openrouter/meta-llama/llama-3.1-8b-instruct')`
+  - Providers: Ollama, vLLM, LMStudio, text-generation-webui, OpenRouter, Anyscale, AnyScale, local OpenAI-compatible servers, and any litellm-supported provider
+  - Install: `pip install browser-use[litellm]`
+  - Example: `examples/models/litellm_local.py`
 
 - Cerebras
 

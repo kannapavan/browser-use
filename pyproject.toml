@@ -61,6 +61,7 @@ dependencies = [
 cli = ["textual==7.4.0"]
 aws = ["boto3==1.42.37"]
 oci = ["oci==2.166.0"]
+litellm = ["litellm>=1.60.0"]
 video = ["imageio[ffmpeg]==2.37.2", "numpy==2.4.1"]
 examples = [
     "agentmail==0.0.59",
@@ -78,7 +79,7 @@ eval = [
     "datamodel-code-generator==0.53.0",
 ]
 cli-oci = ["browser-use[cli,oci]"]
-all = ["browser-use[cli,examples,aws,oci]"]
+all = ["browser-use[cli,examples,aws,oci,litellm]"]
 
 # will prefer to use local source code checked out in ../../browser-use (if present) instead of pypi browser-use package
 # [tool.uv.sources]

@@ -36,8 +36,21 @@ class ChatLiteLLM(BaseChatModel):
 	max_retries: int = 3
 	metadata: dict[str, Any] | None = None
 
+	# Optional: explicit provider name override (e.g. 'ollama', 'openai', 'bedrock')
+	# When None, auto-detection via litellm.get_llm_provider() is used.
+	provider_override: str | None = None
+
+	# Optional: timeout for requests (seconds); passed through to litellm
+	timeout: float | None = None
+
+	# Optional: drop unsupported parameters silently (useful for local servers)
+	drop_params: bool = True
+
 	_provider_name: str = field(default='', init=False, repr=False)
 	_clean_model: str = field(default='', init=False, repr=False)
+
+	# Optional: maximum thinking token budget (passed through to litellm)
+	_max_tokens: int | None = None
 
 	def __post_init__(self) -> None:
 		"""Resolve provider info from the model string via litellm."""
@@ -52,12 +65,17 @@ class ChatLiteLLM(BaseChatModel):
 				self._provider_name = 'openai'
 				self._clean_model = self.model
 
+		# Allow explicit provider override via env var or constructor
+		self._provider_name = self.provider_override or self._provider_name
+
 		logger.debug(
-			'ChatLiteLLM initialized: model=%s, provider=%s, clean=%s, api_base=%s',
+			'ChatLiteLLM initialized: model=%s, provider=%s, clean=%s, api_base=%s, drop_params=%s, timeout=%s',
 			self.model,
 			self._provider_name,
 			self._clean_model,
 			self.api_base or '(default)',
+			self.drop_params,
+			self.timeout,
 		)
 
 	@property
@@ -129,6 +147,10 @@ class ChatLiteLLM(BaseChatModel):
 			'num_retries': self.max_retries,
 		}
 
+		if self.timeout is not None:
+			params['timeout'] = self.timeout
+		if self.drop_params:
+			params['drop_params'] = True
 		if self.temperature is not None:
 			params['temperature'] = self.temperature
 		if self.max_tokens is not None:

@@ -42,6 +42,9 @@ if TYPE_CHECKING:
 	from browser_use.llm.openrouter.chat import ChatOpenRouter
 	from browser_use.llm.vercel.chat import ChatVercel
 
+	# LiteLLM (local/cloud models via litellm)
+	from browser_use.llm.litellm.chat import ChatLiteLLM
+
 	# Type stubs for model instances - enables IDE autocomplete
 	openai_gpt_4o: ChatOpenAI
 	openai_gpt_4o_mini: ChatOpenAI
@@ -88,6 +91,7 @@ _LAZY_IMPORTS = {
 	'ChatDeepSeek': ('browser_use.llm.deepseek.chat', 'ChatDeepSeek'),
 	'ChatGoogle': ('browser_use.llm.google.chat', 'ChatGoogle'),
 	'ChatGroq': ('browser_use.llm.groq.chat', 'ChatGroq'),
+	'ChatLiteLLM': ('browser_use.llm.litellm.chat', 'ChatLiteLLM'),
 	'ChatMistral': ('browser_use.llm.mistral.chat', 'ChatMistral'),
 	'ChatOCIRaw': ('browser_use.llm.oci_raw.chat', 'ChatOCIRaw'),
 	'ChatOllama': ('browser_use.llm.ollama.chat', 'ChatOllama'),
@@ -143,6 +147,7 @@ __all__ = [
 	'ContentImage',
 	# Chat models
 	'BaseChatModel',
+	'ChatLiteLLM',
 	'ChatOpenAI',
 	'ChatBrowserUse',
 	'ChatDeepSeek',

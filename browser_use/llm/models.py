@@ -32,6 +32,7 @@ except ImportError:
 
 if TYPE_CHECKING:
 	from browser_use.llm.base import BaseChatModel
+	from browser_use.llm.litellm.chat import ChatLiteLLM
 
 # Type stubs for IDE autocomplete
 openai_gpt_4o: 'BaseChatModel'
@@ -80,6 +81,11 @@ cerebras_qwen_3_32b: 'BaseChatModel'
 cerebras_qwen_3_235b_a22b_instruct_2507: 'BaseChatModel'
 cerebras_qwen_3_235b_a22b_thinking_2507: 'BaseChatModel'
 cerebras_qwen_3_coder_480b: 'BaseChatModel'
+
+lite_ollama_llama32: 'BaseChatModel'
+lite_ollama_mistral: 'BaseChatModel'
+lite_lmstudio_qwen: 'BaseChatModel'
+lite_vllm_llama: 'BaseChatModel'
 
 bu_latest: 'BaseChatModel'
 bu_1_0: 'BaseChatModel'
@@ -210,8 +216,16 @@ def get_llm_by_name(model_name: str):
 		api_key = os.getenv('BROWSER_USE_API_KEY')
 		return ChatBrowserUse(model=model, api_key=api_key)
 
+	# LiteLLM Models (local + cloud models — Ollama, vLLM, LMStudio, OpenRouter, AnyScale, local OpenAI-compatible, etc.)
+	elif provider == 'lite':
+		api_key = os.getenv('LITE_DEFAULT_API_KEY')
+		api_base = os.getenv('LITE_DEFAULT_BASE_URL')
+		model = model_part.replace('_', '-')
+		from browser_use.llm.litellm.chat import ChatLiteLLM
+		return ChatLiteLLM(model=model, api_key=api_key, api_base=api_base)
+
 	else:
-		available_providers = ['openai', 'azure', 'google', 'oci', 'cerebras', 'bu']
+		available_providers = ['openai', 'azure', 'google', 'oci', 'cerebras', 'bu', 'lite']
 
 		raise ValueError(f"Unknown provider: '{provider}'. Available providers: {', '.join(available_providers)}")
 
@@ -238,6 +252,8 @@ def __getattr__(name: str) -> 'BaseChatModel':
 		return ChatCerebras  # type: ignore
 	elif name == 'ChatBrowserUse':
 		return ChatBrowserUse  # type: ignore
+	elif name == 'ChatLiteLLM':
+		return ChatLiteLLM  # type: ignore
 
 	# Handle model instances - these are the main use case
 	try:
@@ -313,6 +329,11 @@ __all__ += [
 	'bu_latest',
 	'bu_1_0',
 	'bu_2_0',
+	# LiteLLM instances - created on demand
+	'lite_ollama_llama32',
+	'lite_ollama_mistral',
+	'lite_lmstudio_qwen',
+	'lite_vllm_llama',
 ]
 
 # NOTE: OCI backend is optional. The try/except ImportError and conditional __all__ are required
